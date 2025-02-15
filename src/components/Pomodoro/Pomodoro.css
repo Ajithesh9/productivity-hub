@@ -1,0 +1,39 @@
+.pomodoro {
+  text-align: center;
+  padding: 20px;
+}
+
+.pomodoro-title {
+  font-family: "Montserrat", sans-serif; /* Use a modern font (include via Google Fonts in index.html) */
+  font-size: 2.5em;
+  margin-bottom: 20px;
+}
+
+.timer-display {
+  font-size: 4em;
+  margin: 20px 0;
+}
+
+.controls button {
+  font-size: 1.2em;
+  padding: 10px 20px;
+  margin: 10px;
+  cursor: pointer;
+  border: none;
+  background: #1976d2;
+  color: #fff;
+  border-radius: 5px;
+}
+
+.custom-time {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.custom-time input {
+  width: 60px;
+  padding: 5px;
+  margin-left: 10px;
+}
