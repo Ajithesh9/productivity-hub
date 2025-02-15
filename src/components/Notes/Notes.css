@@ -1,0 +1,151 @@
+.notes-page {
+  padding: 20px;
+}
+
+.notes-controls input,
+.notes-controls textarea {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background-color: var(--input-bg);
+  color: var(--text-color);
+  transition: height 0.3s ease;
+}
+
+.notes-controls textarea {
+  min-height: 100px;
+  resize: none;
+}
+
+.notes-controls button {
+  padding: 8px 12px;
+  background-color: var(--primary-color);
+  border: none;
+  color: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.notes-list {
+  margin-top: 20px;
+}
+
+.note-item {
+  padding: 10px;
+  border: 1px solid var(--border-color);
+  margin-bottom: 8px;
+  border-radius: 4px;
+  background-color: var(--item-bg);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+
+.note-item.active {
+  border: 2px solid var(--primary-color);
+}
+
+.note-actions button {
+  background: transparent;
+  border: none;
+  color: var(--secondary-color);
+  cursor: pointer;
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+.active-note {
+  margin-top: 20px;
+  border: 1px solid var(--border-color);
+  padding: 10px;
+  border-radius: 4px;
+  background-color: var(--item-bg);
+  position: relative;
+}
+
+.active-note-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.action-button {
+  padding: 5px 10px;
+  background-color: var(--secondary-color);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.active-content {
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.preview-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(2.5px);
+  z-index: 1000;
+}
+
+.preview-window {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 1001;
+  width: 90%;
+  max-width: 800px;
+  max-height: 80vh;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.preview-window h3 {
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.preview-window p {
+  color: #555;
+  white-space: pre-wrap;
+  word-break: break-word;
+  line-height: 1.5;
+}
+
+.preview-window button.close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 1.8em;
+  padding: 0 10px;
+  cursor: pointer;
+  color: #666;
+}
+
+.preview-window button.close:hover {
+  color: #333;
+}

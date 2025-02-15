@@ -1,0 +1,61 @@
+:root {
+  --background-color: #f0f0f0;
+  --text-color: #333;
+  --primary-color: #1976d2;
+  --secondary-color: #03dac6;
+  --border-color: #ccc;
+  --input-bg: #fff;
+  --item-bg: #fff;
+  --quote-bg: #fff;
+}
+
+.layout.dark {
+  --background-color: #2c2c2c; /* Dark grey */
+  --text-color: #e0e0e0;
+  --primary-color: #bb86fc;
+  --secondary-color: #03dac6;
+  --border-color: #555;
+  --input-bg: #3a3a3a;
+  --item-bg: #3a3a3a;
+  --quote-bg: #3a3a3a;
+}
+
+.layout {
+  display: flex;
+  min-height: 100vh;
+  background: var(--background-color);
+  color: var(--text-color);
+  transition: background 0.3s, color 0.3s;
+}
+
+.navbar {
+  width: 60px;
+  background: var(--background-color);
+  border-right: 1px solid var(--border-color);
+  transition: width 0.3s;
+  overflow: hidden;
+}
+
+.navbar:hover {
+  width: 200px;
+}
+
+.content {
+  flex: 1;
+  padding: 20px;
+}
+
+.header {
+  display: flex;
+  justify-content: flex-end;
+  padding: 10px;
+}
+
+.theme-toggle {
+  padding: 5px 10px;
+  cursor: pointer;
+  background: var(--primary-color);
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+}
