@@ -4,7 +4,8 @@ import { v4 as uuidv4 } from "uuid";
 import "./Checklist.css";
 
 function Checklist() {
-  const [tasks, setTasks] = useState([]);
+  const [unfinishedTasks, setUnfinishedTasks] = useState([]);
+  const [finishedTasks, setFinishedTasks] = useState([]);
   const [input, setInput] = useState("");
 
   const addTask = () => {
@@ -12,15 +13,21 @@ function Checklist() {
       const newTask = {
         id: uuidv4(),
         text: input.slice(0, 80),
-        completed: false,
       };
-      setTasks([...tasks, newTask]);
+      setUnfinishedTasks((prev) => [...prev, newTask]);
       setInput("");
     }
   };
 
-  const deleteTask = (id) => {
-    setTasks(tasks.filter((task) => task.id !== id));
+  const deleteTask = (id, isUnfinished) => {
+    const newUnfinished = isUnfinished
+      ? unfinishedTasks.filter((t) => t.id !== id)
+      : finishedTasks.filter((t) => t.id !== id);
+    const newFinished = isUnfinished
+      ? finishedTasks
+      : finishedTasks.filter((t) => t.id !== id);
+    setUnfinishedTasks(newUnfinished);
+    setFinishedTasks(newFinished);
   };
 
   const onDragEnd = useCallback(
@@ -33,44 +40,31 @@ function Checklist() {
       const sourceDroppable = source.droppableId;
       const destDroppable = destination.droppableId;
 
-      const newTasks = [...tasks];
-
       if (sourceDroppable === destDroppable) {
         // Reordering within the same column
-        const [movedTask] = newTasks.splice(sourceIndex, 1);
-        newTasks.splice(destIndex, 0, movedTask);
-        setTasks(newTasks);
+        const isUnfinished = sourceDroppable === "unfinished";
+        const currentArray = isUnfinished ? unfinishedTasks : finishedTasks;
+        const newCurrentArray = [...currentArray];
+        const [movedTask] = newCurrentArray.splice(sourceIndex, 1);
+        newCurrentArray.splice(destIndex, 0, movedTask);
+        if (isUnfinished) {
+          setUnfinishedTasks(newCurrentArray);
+        } else {
+          setFinishedTasks(newCurrentArray);
+        }
       } else {
-        // Moving between columns: update completed status
+        // Moving between columns
         const sourceArray =
-          sourceDroppable === "unfinished"
-            ? tasks.filter((t) => !t.completed)
-            : tasks.filter((t) => t.completed);
-
+          sourceDroppable === "unfinished" ? unfinishedTasks : finishedTasks;
         const destinationArray =
-          destDroppable === "unfinished"
-            ? tasks.filter((t) => !t.completed)
-            : tasks.filter((t) => t.completed);
+          destDroppable === "unfinished" ? unfinishedTasks : finishedTasks;
 
         const [movedTask] = sourceArray.splice(sourceIndex, 1);
-        movedTask.completed = destDroppable === "unfinished" ? false : true;
-
-        // Insert into destination array at correct index
-        const newDestinationArray = [
-          ...destinationArray.slice(0, destIndex),
-          movedTask,
-          ...destinationArray.slice(destIndex),
-        ];
-
-        // Reconstruct tasks array
-        setTasks([...newDestinationArray, ...sourceArray]);
+        destinationArray.splice(destIndex, 0, movedTask);
       }
     },
-    [tasks]
+    [unfinishedTasks, finishedTasks]
   );
-
-  const unfinishedTasks = tasks.filter((t) => !t.completed);
-  const finishedTasks = tasks.filter((t) => t.completed);
 
   return (
     <div className="checklist-page">
@@ -115,7 +109,7 @@ function Checklist() {
                           <span className="task-text">{task.text}</span>
                           <div className="task-actions">
                             <button
-                              onClick={() => deleteTask(task.id)}
+                              onClick={() => deleteTask(task.id, true)}
                               className="btn delete-btn"
                             >
                               Delete
@@ -155,7 +149,7 @@ function Checklist() {
                           <span className="task-text">{task.text}</span>
                           <div className="task-actions">
                             <button
-                              onClick={() => deleteTask(task.id)}
+                              onClick={() => deleteTask(task.id, false)}
                               className="btn delete-btn"
                             >
                               Delete
