@@ -12,7 +12,7 @@ function Pomodoro() {
   const [isWork, setIsWork] = useState(true);
   const timerRef = useRef(null);
 
-  // Calculate progress percentage for the progressive bar
+  // Calculate progress percentage for the progress bar and background fill
   const totalDuration = isWork ? workTime : breakTime;
   const progressPercent = ((totalDuration - timeLeft) / totalDuration) * 100;
 
@@ -120,12 +120,20 @@ function Pomodoro() {
     <div className="pomodoro">
       <h1 className="pomodoro-title">Pomodoro Timer</h1>
 
-      {/* Background Animation Element */}
+      {/* Full-Page Water Animation Background (placed behind the card) */}
       <motion.div
-        className={`background-animation ${isWork ? "work" : "break"}`}
+        className={`page-background ${isWork ? "work" : "break"}`}
         initial={{ opacity: 0 }}
-        animate={{ opacity: 0.15 }}
-        transition={{ duration: 1, repeat: Infinity, repeatType: "mirror" }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1 }}
+      />
+
+      {/* Water Fill Animation within the Pomodoro Card */}
+      <motion.div
+        className={`water-animation ${isWork ? "work" : "break"}`}
+        initial={{ height: "100%" }}
+        animate={{ height: isRunning ? `${progressPercent}%` : "100%" }}
+        transition={{ duration: 0.5 }}
       />
 
       <div className="timer-display">
@@ -134,11 +142,10 @@ function Pomodoro() {
         </span>
       </div>
 
-      {/* Progressive Bar with Mode-Specific Color */}
+      {/* Existing Progressive Bar */}
       <motion.div
         className={`progress-bar ${isWork ? "work" : "break"}`}
-        initial={{ width: 0 }}
-        animate={{ width: `${progressPercent}%` }}
+        style={{ width: `${progressPercent}%` }}
         transition={{ duration: 0.5 }}
       />
 
@@ -151,7 +158,7 @@ function Pomodoro() {
         </button>
       </div>
 
-      {/* Custom Time Panel fades out when running */}
+      {/* Custom Time Panel (fades out when timer is running) */}
       <AnimatePresence>
         {!isRunning && (
           <motion.div
