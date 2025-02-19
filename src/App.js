@@ -13,7 +13,7 @@ function App() {
           <Route index element={<Pomodoro />} />
           <Route path="notes" element={<Notes />} />
           <Route path="checklist" element={<Checklist />} />
-          {/* MusicPlayer and Quotes are included in Layout */}
+          <Route path="*" element={<div>Page Not Found</div>} />
         </Route>
       </Routes>
     </Router>
