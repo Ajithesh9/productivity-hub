@@ -131,8 +131,16 @@ function Pomodoro() {
       {/* Water Fill Animation within the Pomodoro Card */}
       <motion.div
         className={`water-animation ${isWork ? "work" : "break"}`}
-        initial={{ height: "100%" }}
-        animate={{ height: isRunning ? `${progressPercent}%` : "100%" }}
+        initial={{ height: isWork ? "120%" : "100%" }}
+        animate={{
+          height: isRunning
+            ? isWork
+              ? `${progressPercent * 1.2}%`
+              : `${progressPercent}%`
+            : isWork
+            ? "120%"
+            : "100%",
+        }}
         transition={{ duration: 0.5 }}
       />
 
