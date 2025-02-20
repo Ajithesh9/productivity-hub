@@ -1,9 +1,34 @@
 import React, { useState, useRef, useEffect } from "react";
 import "./Notes.css";
 
+// Custom hook for localStorage persistence
+function useLocalStorage(key, initialValue) {
+  const [storedValue, setStoredValue] = useState(() => {
+    try {
+      const item = window.localStorage.getItem(key);
+      return item ? JSON.parse(item) : initialValue;
+    } catch (error) {
+      console.error("Error reading localStorage key “" + key + "”: ", error);
+      return initialValue;
+    }
+  });
+
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(key, JSON.stringify(storedValue));
+    } catch (error) {
+      console.error("Error setting localStorage key “" + key + "”: ", error);
+    }
+  }, [key, storedValue]);
+
+  return [storedValue, setStoredValue];
+}
+
 function Notes() {
-  const [notes, setNotes] = useState([]);
-  const [activeNoteId, setActiveNoteId] = useState(null);
+  // Persist notes and active note ID
+  const [notes, setNotes] = useLocalStorage("notes", []);
+  const [activeNoteId, setActiveNoteId] = useLocalStorage("activeNoteId", null);
+
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [previewNote, setPreviewNote] = useState(null);
@@ -23,14 +48,16 @@ function Notes() {
       return;
     }
     const newNote = { id: Date.now().toString(), title, content };
-    setNotes([...notes, newNote]);
+    const updatedNotes = [...notes, newNote];
+    setNotes(updatedNotes);
     setActiveNoteId(newNote.id);
     setTitle("");
     setContent("");
   };
 
   const deleteNote = (id) => {
-    setNotes(notes.filter((note) => note.id !== id));
+    const updatedNotes = notes.filter((note) => note.id !== id);
+    setNotes(updatedNotes);
     if (activeNoteId === id) setActiveNoteId(null);
   };
 
@@ -49,8 +76,10 @@ function Notes() {
 
   const handleContentChange = (e) => {
     setContent(e.target.value);
-    textareaRef.current.style.height = "auto";
-    textareaRef.current.style.height = textareaRef.current.scrollHeight + "px";
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "auto";
+      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+    }
   };
 
   const handleNotePreview = (note) => {
@@ -66,8 +95,7 @@ function Notes() {
   useEffect(() => {
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
-      textareaRef.current.style.height =
-        textareaRef.current.scrollHeight + "px";
+      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
     }
   }, [content]);
 
@@ -87,7 +115,6 @@ function Notes() {
           placeholder="Write your note here..."
           value={content}
           onChange={handleContentChange}
-          style={{ minHeight: "100px", resize: "none" }}
           maxLength={4000}
         />
         <button onClick={addNote} aria-label="Add Note">
