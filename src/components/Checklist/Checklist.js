@@ -3,9 +3,38 @@ import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { v4 as uuidv4 } from "uuid";
 import "./Checklist.css";
 
+// Custom hook for localStorage persistence
+function useLocalStorage(key, initialValue) {
+  const [storedValue, setStoredValue] = useState(() => {
+    try {
+      const item = window.localStorage.getItem(key);
+      return item ? JSON.parse(item) : initialValue;
+    } catch (error) {
+      console.error(`Error reading localStorage key "${key}": `, error);
+      return initialValue;
+    }
+  });
+
+  React.useEffect(() => {
+    try {
+      window.localStorage.setItem(key, JSON.stringify(storedValue));
+    } catch (error) {
+      console.error(`Error setting localStorage key "${key}": `, error);
+    }
+  }, [key, storedValue]);
+
+  return [storedValue, setStoredValue];
+}
+
 function Checklist() {
-  const [unfinishedTasks, setUnfinishedTasks] = useState([]);
-  const [finishedTasks, setFinishedTasks] = useState([]);
+  const [unfinishedTasks, setUnfinishedTasks] = useLocalStorage(
+    "checklist_unfinishedTasks",
+    []
+  );
+  const [finishedTasks, setFinishedTasks] = useLocalStorage(
+    "checklist_finishedTasks",
+    []
+  );
   const [input, setInput] = useState("");
 
   const addTask = () => {
@@ -20,14 +49,11 @@ function Checklist() {
   };
 
   const deleteTask = (id, isUnfinished) => {
-    const newUnfinished = isUnfinished
-      ? unfinishedTasks.filter((t) => t.id !== id)
-      : finishedTasks.filter((t) => t.id !== id);
-    const newFinished = isUnfinished
-      ? finishedTasks
-      : finishedTasks.filter((t) => t.id !== id);
-    setUnfinishedTasks(newUnfinished);
-    setFinishedTasks(newFinished);
+    if (isUnfinished) {
+      setUnfinishedTasks(unfinishedTasks.filter((t) => t.id !== id));
+    } else {
+      setFinishedTasks(finishedTasks.filter((t) => t.id !== id));
+    }
   };
 
   const onDragEnd = useCallback(
@@ -42,25 +68,37 @@ function Checklist() {
 
       if (sourceDroppable === destDroppable) {
         // Reordering within the same column
-        const isUnfinished = sourceDroppable === "unfinished";
-        const currentArray = isUnfinished ? unfinishedTasks : finishedTasks;
-        const newCurrentArray = [...currentArray];
-        const [movedTask] = newCurrentArray.splice(sourceIndex, 1);
-        newCurrentArray.splice(destIndex, 0, movedTask);
-        if (isUnfinished) {
-          setUnfinishedTasks(newCurrentArray);
+        if (sourceDroppable === "unfinished") {
+          const newUnfinished = [...unfinishedTasks];
+          const [movedTask] = newUnfinished.splice(sourceIndex, 1);
+          newUnfinished.splice(destIndex, 0, movedTask);
+          setUnfinishedTasks(newUnfinished);
         } else {
-          setFinishedTasks(newCurrentArray);
+          const newFinished = [...finishedTasks];
+          const [movedTask] = newFinished.splice(sourceIndex, 1);
+          newFinished.splice(destIndex, 0, movedTask);
+          setFinishedTasks(newFinished);
         }
       } else {
         // Moving between columns
-        const sourceArray =
-          sourceDroppable === "unfinished" ? unfinishedTasks : finishedTasks;
-        const destinationArray =
-          destDroppable === "unfinished" ? unfinishedTasks : finishedTasks;
-
-        const [movedTask] = sourceArray.splice(sourceIndex, 1);
-        destinationArray.splice(destIndex, 0, movedTask);
+        if (sourceDroppable === "unfinished" && destDroppable === "finished") {
+          const newUnfinished = [...unfinishedTasks];
+          const newFinished = [...finishedTasks];
+          const [movedTask] = newUnfinished.splice(sourceIndex, 1);
+          newFinished.splice(destIndex, 0, movedTask);
+          setUnfinishedTasks(newUnfinished);
+          setFinishedTasks(newFinished);
+        } else if (
+          sourceDroppable === "finished" &&
+          destDroppable === "unfinished"
+        ) {
+          const newUnfinished = [...unfinishedTasks];
+          const newFinished = [...finishedTasks];
+          const [movedTask] = newFinished.splice(sourceIndex, 1);
+          newUnfinished.splice(destIndex, 0, movedTask);
+          setUnfinishedTasks(newUnfinished);
+          setFinishedTasks(newFinished);
+        }
       }
     },
     [unfinishedTasks, finishedTasks]
@@ -146,7 +184,9 @@ function Checklist() {
                           {...provided.dragHandleProps}
                           className="task-item"
                         >
-                          <span className="task-text">{task.text}</span>
+                          <span className="task-text completed">
+                            {task.text}
+                          </span>
                           <div className="task-actions">
                             <button
                               onClick={() => deleteTask(task.id, false)}
