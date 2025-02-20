@@ -1,4 +1,7 @@
 .navbar {
+  position: fixed; /* Fixes the navbar on the left */
+  top: 0;
+  left: 0;
   height: 100vh;
   background: var(--background-color);
   border-right: 1px solid var(--border-color);
@@ -6,9 +9,7 @@
   overflow: hidden;
 }
 
-.navbar:hover {
-  width: 200px;
-}
+/* Removed the .navbar:hover rule that changed width in CSS */
 
 .navbar ul {
   list-style: none;
