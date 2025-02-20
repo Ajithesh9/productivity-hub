@@ -2,24 +2,82 @@ import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import "./Pomodoro.css";
 
+// Custom hook for localStorage persistence
+function useLocalStorage(key, initialValue) {
+  const [storedValue, setStoredValue] = useState(() => {
+    try {
+      const item = window.localStorage.getItem(key);
+      return item ? JSON.parse(item) : initialValue;
+    } catch (error) {
+      console.error(`Error reading localStorage key "${key}": `, error);
+      return initialValue;
+    }
+  });
+
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(key, JSON.stringify(storedValue));
+    } catch (error) {
+      console.error(`Error setting localStorage key "${key}": `, error);
+    }
+  }, [key, storedValue]);
+
+  return [storedValue, setStoredValue];
+}
+
 function Pomodoro() {
   const defaultWorkTime = 25 * 60;
   const defaultBreakTime = 5 * 60;
-  const [workTime, setWorkTime] = useState(defaultWorkTime);
-  const [breakTime, setBreakTime] = useState(defaultBreakTime);
-  const [timeLeft, setTimeLeft] = useState(defaultWorkTime);
-  const [isRunning, setIsRunning] = useState(false);
-  const [isWork, setIsWork] = useState(true);
+
+  // Persist state using localStorage
+  const [workTime, setWorkTime] = useLocalStorage(
+    "pomodoro_workTime",
+    defaultWorkTime
+  );
+  const [breakTime, setBreakTime] = useLocalStorage(
+    "pomodoro_breakTime",
+    defaultBreakTime
+  );
+  const [timeLeft, setTimeLeft] = useLocalStorage(
+    "pomodoro_timeLeft",
+    defaultWorkTime
+  );
+  const [isRunning, setIsRunning] = useLocalStorage(
+    "pomodoro_isRunning",
+    false
+  );
+  const [isWork, setIsWork] = useLocalStorage("pomodoro_isWork", true);
+  const [startTimestamp, setStartTimestamp] = useLocalStorage(
+    "pomodoro_startTimestamp",
+    null
+  );
   const timerRef = useRef(null);
 
-  // Calculate progress percentage for the progress bar and background fill
+  // On mount, if the timer was running, calculate elapsed time while unmounted.
+  useEffect(() => {
+    if (isRunning && startTimestamp) {
+      const elapsed = Math.floor((Date.now() - startTimestamp) / 1000);
+      if (elapsed > 0) {
+        setTimeLeft((prev) => Math.max(prev - elapsed, 0));
+        // Reset startTimestamp to now for continued accuracy.
+        setStartTimestamp(Date.now());
+      }
+    }
+  }, []); // Run once on mount
+
   const totalDuration = isWork ? workTime : breakTime;
   const progressPercent = ((totalDuration - timeLeft) / totalDuration) * 100;
 
   useEffect(() => {
     if (isRunning && timeLeft > 0) {
       timerRef.current = setInterval(() => {
-        setTimeLeft((prev) => prev - 1);
+        setTimeLeft((prev) => {
+          if (prev <= 1) {
+            clearInterval(timerRef.current);
+            return 0;
+          }
+          return prev - 1;
+        });
       }, 1000);
     } else if (isRunning && timeLeft === 0) {
       clearInterval(timerRef.current);
@@ -30,9 +88,12 @@ function Pomodoro() {
           );
         }
         setIsRunning(false);
+        // After 10 seconds, automatically start the break session.
         setTimeout(() => {
           setIsWork(false);
           setTimeLeft(breakTime);
+          setStartTimestamp(Date.now());
+          setIsRunning(true);
         }, 10000);
       } else {
         if (Notification.permission === "granted") {
@@ -43,6 +104,7 @@ function Pomodoro() {
         setWorkTime(defaultWorkTime);
         setBreakTime(defaultBreakTime);
         setTimeLeft(defaultWorkTime);
+        setStartTimestamp(null);
       }
     } else {
       clearInterval(timerRef.current);
@@ -55,6 +117,11 @@ function Pomodoro() {
     breakTime,
     defaultWorkTime,
     defaultBreakTime,
+    setTimeLeft,
+    setIsRunning,
+    setIsWork,
+    setWorkTime,
+    setBreakTime,
   ]);
 
   useEffect(() => {
@@ -64,16 +131,23 @@ function Pomodoro() {
   }, []);
 
   const handleStartPause = () => {
-    if (!isRunning && timeLeft === 0) {
-      setTimeLeft(isWork ? workTime : breakTime);
+    if (!isRunning) {
+      if (timeLeft === 0) {
+        setTimeLeft(isWork ? workTime : breakTime);
+      }
+      setIsRunning(true);
+      setStartTimestamp(Date.now());
+    } else {
+      setIsRunning(false);
+      setStartTimestamp(null);
     }
-    setIsRunning((prev) => !prev);
   };
 
   const handleCancel = () => {
     setIsRunning(false);
     clearInterval(timerRef.current);
     setTimeLeft(isWork ? workTime : breakTime);
+    setStartTimestamp(null);
   };
 
   const formatTime = (seconds) => {
@@ -119,16 +193,12 @@ function Pomodoro() {
   return (
     <div className="pomodoro">
       <h1 className="pomodoro-title">Pomodoro Timer</h1>
-
-      {/* Full-Page Water Animation Background (placed behind the card) */}
       <motion.div
         className={`page-background ${isWork ? "work" : "break"}`}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 1 }}
       />
-
-      {/* Water Fill Animation within the Pomodoro Card */}
       <motion.div
         className={`water-animation ${isWork ? "work" : "break"}`}
         initial={{ height: isWork ? "120%" : "100%" }}
@@ -143,20 +213,16 @@ function Pomodoro() {
         }}
         transition={{ duration: 0.5 }}
       />
-
       <div className="timer-display">
         <span className={isWork ? "work-time" : "break-time"}>
           {formatTime(timeLeft)}
         </span>
       </div>
-
-      {/* Existing Progressive Bar */}
       <motion.div
         className={`progress-bar ${isWork ? "work" : "break"}`}
         style={{ width: `${progressPercent}%` }}
         transition={{ duration: 0.5 }}
       />
-
       <div className="controls">
         <button onClick={handleStartPause} className="start-pause-btn">
           {isRunning ? "Pause" : "Start"}
@@ -165,8 +231,6 @@ function Pomodoro() {
           Cancel
         </button>
       </div>
-
-      {/* Custom Time Panel (fades out when timer is running) */}
       <AnimatePresence>
         {!isRunning && (
           <motion.div
