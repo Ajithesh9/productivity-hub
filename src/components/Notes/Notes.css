@@ -1,51 +1,125 @@
-.notes-page {
-  padding: 20px;
+:root {
+  --base-font-size: 16px;
+  --font-family: "Inter", sans-serif;
+  --text-color: #333;
+  --input-bg: #f5f5f5;
+  --item-bg: #fff;
+  --border-color: #ddd;
+  --primary-color: #2a7aeb;
+  --primary-hover: #2263c8;
+  --delete-color: #dc3545;
+  --delete-hover: #a71d2a;
+  --spacing-xs: 8px;
+  --spacing-sm: 12px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
 }
 
+.notes-page {
+  max-width: 1000px; /* Increased overall container size */
+  margin: var(--spacing-lg) auto;
+  padding: var(--spacing-lg);
+  font-family: var(--font-family);
+  font-size: var(--base-font-size);
+  background: var(--item-bg);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.notes-page h2 {
+  margin: var(--spacing-lg) 0;
+  color: var(--text-color);
+  text-align: center;
+}
+
+.notes-controls {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+  padding: var(--spacing-md);
+  background: var(--item-bg);
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Ensure consistent box-sizing and typography for both input and textarea */
 .notes-controls input,
 .notes-controls textarea {
+  box-sizing: border-box;
   width: 100%;
-  padding: 8px;
-  margin-bottom: 10px;
+  padding: var(--spacing-md);
   border: 1px solid var(--border-color);
-  border-radius: 4px;
-  background-color: var(--input-bg);
+  border-radius: 8px;
+  background: var(--input-bg);
   color: var(--text-color);
+  transition: border-color 0.3s ease;
+  font-size: 1rem;
+  font-family: var(--font-family);
+  line-height: 1.5;
+}
+
+/* Add a smooth transition for height changes in the textarea */
+.notes-controls textarea {
+  min-height: 120px;
+  resize: vertical;
   transition: height 0.3s ease;
 }
 
-.notes-controls textarea {
-  min-height: 100px;
-  resize: none;
+.notes-controls input:focus,
+.notes-controls textarea:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 5px rgba(42, 122, 235, 0.5);
 }
 
 .notes-controls button {
-  padding: 8px 12px;
-  background-color: var(--primary-color);
+  align-self: flex-end;
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: var(--primary-color);
+  color: white;
   border: none;
-  color: #fff;
-  border-radius: 4px;
+  border-radius: 8px;
   cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, box-shadow 0.3s;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.notes-controls button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
 .notes-list {
-  margin-top: 20px;
+  margin-top: var(--spacing-lg);
+}
+
+.notes-list h3 {
+  margin-bottom: var(--spacing-md);
+  color: var(--text-color);
+  font-size: 1.5em;
+  font-weight: 600;
+  text-align: center;
 }
 
 .note-item {
-  padding: 10px;
-  border: 1px solid var(--border-color);
-  margin-bottom: 8px;
-  border-radius: 4px;
-  background-color: var(--item-bg);
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: var(--spacing-md);
+  margin-bottom: var(--spacing-sm);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--item-bg);
+  transition: box-shadow 0.3s, transform 0.2s;
   cursor: pointer;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  max-width: 100%;
+}
+
+.note-item:hover {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
 }
 
 .note-item.active {
@@ -55,35 +129,49 @@
 .note-actions button {
   background: transparent;
   border: none;
-  color: var(--secondary-color);
+  color: var(--primary-color);
   cursor: pointer;
-  margin-left: 5px;
-  margin-right: 5px;
+  margin: 0 var(--spacing-xs);
+  transition: color 0.3s;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.note-actions button:hover {
+  color: var(--primary-hover);
 }
 
 .active-note {
-  margin-top: 20px;
+  margin-top: var(--spacing-lg);
   border: 1px solid var(--border-color);
-  padding: 10px;
-  border-radius: 4px;
-  background-color: var(--item-bg);
+  padding: var(--spacing-md);
+  border-radius: 8px;
+  background: var(--item-bg);
   position: relative;
+  animation: fadeIn 0.5s ease-out;
 }
 
 .active-note-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 10px;
+  margin-bottom: var(--spacing-md);
 }
 
 .action-button {
-  padding: 5px 10px;
-  background-color: var(--secondary-color);
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: var(--primary-color);
   color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: 8px;
   cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.action-button:hover {
+  background: var(--primary-hover);
 }
 
 .active-content {
@@ -91,6 +179,17 @@
   overflow-wrap: break-word;
   max-height: 200px;
   overflow-y: auto;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .preview-overlay {
@@ -102,6 +201,16 @@
   background: rgba(0, 0, 0, 0.3);
   backdrop-filter: blur(5px);
   z-index: 1000;
+  animation: fadeInOverlay 0.3s ease-out;
+}
+
+@keyframes fadeInOverlay {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .preview-window {
@@ -109,10 +218,10 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background-color: white;
-  border: 1px solid #ccc;
+  background: var(--item-bg);
+  border: 1px solid var(--border-color);
   border-radius: 12px;
-  padding: 20px;
+  padding: var(--spacing-lg);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   z-index: 1001;
   width: 90%;
@@ -120,15 +229,27 @@
   max-height: 80vh;
   overflow-x: hidden;
   overflow-y: auto;
+  animation: fadeInWindow 0.4s ease-out;
+}
+
+@keyframes fadeInWindow {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -45%);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
 }
 
 .preview-window h3 {
-  color: #333;
-  margin-bottom: 10px;
+  color: var(--text-color);
+  margin-bottom: var(--spacing-md);
 }
 
 .preview-window p {
-  color: #555;
+  color: #c4c4c4;
   white-space: pre-wrap;
   word-break: break-word;
   line-height: 1.5;
@@ -136,14 +257,15 @@
 
 .preview-window button.close {
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: var(--spacing-sm);
+  right: var(--spacing-sm);
   background: none;
   border: none;
   font-size: 1.8em;
-  padding: 0 10px;
+  padding: 0 var(--spacing-xs);
   cursor: pointer;
   color: #666;
+  transition: color 0.3s ease;
 }
 
 .preview-window button.close:hover {
