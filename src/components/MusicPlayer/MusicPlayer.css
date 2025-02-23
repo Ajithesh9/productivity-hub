@@ -1,18 +1,167 @@
+:root {
+  --background-color-dark: #2c3e50;
+  --background-color-light: #ffffff;
+  --text-color-dark: #ecf0f1;
+  --text-color-light: #333333;
+  --primary-color: #1976d2;
+  --secondary-color: #ff9800;
+  --border-color-dark: #34495e;
+  --border-color-light: #cccccc;
+  --idle-gradient: linear-gradient(
+    135deg,
+    #bdc3c7,
+    #ecf0f1
+  ); /* Soft gradient for idle state */
+}
+
+body.dark-mode {
+  --background-color: var(--background-color-dark);
+  --text-color: var(--text-color-dark);
+  --border-color: var(--border-color-dark);
+  --idle-gradient: linear-gradient(
+    135deg,
+    #34495e,
+    #2c3e50
+  ); /* Dark mode idle gradient */
+}
+
+body.light-mode {
+  --background-color: var(--background-color-light);
+  --text-color: var(--text-color-light);
+  --border-color: var(--border-color-light);
+}
+
 .music-player {
   position: fixed;
   bottom: 20px;
   right: 20px;
   background: var(--background-color);
   padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
+  border: 1px solid var(--border-color);
+  border-radius: 25px; /* Pill shape */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.5s ease-in-out 0.1s;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  width: 50px; /* Initial compact size */
+  height: auto;
+  /* Enable container queries on this element */
+  container-type: inline-size;
+  user-select: none; /* Prevent text selection */
+}
+
+.music-player * {
+  user-select: none; /* Ensure all children are not selectable */
+}
+
+/* Compact Pill Design */
+.music-player .compact-icon {
+  position: relative;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: var(--idle-gradient); /* Subtle gradient for idle state */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background 0.5s ease-in-out, box-shadow 0.3s ease-in-out;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+}
+
+.music-player:hover .compact-icon {
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Stronger glow on hover */
+}
+
+.music-player.playing .compact-icon {
+  background: linear-gradient(
+    135deg,
+    var(--primary-color),
+    var(--secondary-color)
+  );
+  animation: gradient-animate 3s infinite alternate; /* Smooth gradient animation */
+  box-shadow: 0 0 15px rgba(25, 118, 210, 0.5); /* Glowing effect when playing */
+}
+
+@keyframes gradient-animate {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 100% 50%;
+  }
+}
+
+.music-player .compact-icon::after {
+  content: "🎵"; /* Music Note Icon */
+  font-size: 24px;
+  color: var(--text-color);
+  transition: transform 0.3s ease-in-out;
+}
+
+.music-player.playing .compact-icon::after {
+  transform: scale(1.2); /* Slightly enlarge the icon when playing */
+}
+
+.music-player:hover {
+  width: 350px; /* Expanded size */
+}
+
+/* Track Info: by default hidden */
+.music-player .track-info {
+  font-family: "Roboto", sans-serif;
+  font-size: 0px;
+  font-weight: bold;
+  color: var(--text-color);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 10px;
+  transition: font-size 0.5s ease-in-out 0.1s, opacity 0.5s ease-in-out 0.1s;
+  opacity: 0;
+}
+
+/* Only reveal track info when container width is at least 92px */
+@container (min-width: 92px) {
+  .music-player.playing .track-info {
+    font-size: 18px;
+    opacity: 1;
+  }
+}
+
+.music-player .controls {
+  display: none;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+}
+
+.music-player:hover .controls {
+  display: flex;
 }
 
 .music-player button {
   cursor: pointer;
-  background: #1976d2;
-  color: #fff;
+  background: transparent;
   border: none;
-  padding: 5px 10px;
-  border-radius: 4px;
+  padding: 0;
+  margin: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: transform 0.3s ease-in-out;
+}
+
+.music-player button:hover {
+  transform: scale(1.2); /* Scale up buttons on hover */
+}
+
+.music-player button img {
+  width: 20px;
+  height: 20px;
+  filter: brightness(0) invert(1); /* Invert colors for dark mode */
 }
