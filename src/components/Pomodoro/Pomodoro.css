@@ -43,6 +43,7 @@
   overflow: hidden;
   background: transparent;
   top: -2px; /* Moved up by 2px */
+  user-select: none;
 }
 
 /* Modern Card Design with Inset Shadow */
