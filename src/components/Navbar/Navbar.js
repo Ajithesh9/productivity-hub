@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { FaHome, FaStickyNote, FaListAlt } from "react-icons/fa";
+// Import modern Lucide React icons
+import { Clock, FileText, CheckSquare, Info } from "lucide-react";
 import "./Navbar.css";
 
 function Navbar({ onWidthChange }) {
@@ -26,26 +27,36 @@ function Navbar({ onWidthChange }) {
       onMouseLeave={handleMouseLeave}
     >
       <ul>
+        {/* Pomodoro Section */}
         <li className={location.pathname === "/" ? "active" : ""}>
           <Link to="/">
-            <FaHome className="icon" />
+            <Clock className="icon" />
             <span className="text">Pomodoro</span>
           </Link>
         </li>
+
+        {/* Notes Section */}
         <li className={location.pathname === "/notes" ? "active" : ""}>
           <Link to="/notes">
-            <FaStickyNote className="icon" />
+            <FileText className="icon" />
             <span className="text">Notes</span>
           </Link>
         </li>
+
+        {/* Checklist Section */}
         <li className={location.pathname === "/checklist" ? "active" : ""}>
           <Link to="/checklist">
-            <FaListAlt className="icon" />
+            <CheckSquare className="icon" />
             <span className="text">Checklist</span>
           </Link>
         </li>
-        <li>
-          <Link to="/about">About</Link>
+
+        {/* About Section */}
+        <li className="about">
+          <Link to="/about">
+            <Info className="icon" />
+            <span className="text">About</span>
+          </Link>
         </li>
       </ul>
     </div>
