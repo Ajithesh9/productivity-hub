@@ -12,7 +12,7 @@ function About() {
         <p>
           Hi, I'm <span className="unique-name">Ajithesh</span>! This project is
           designed to boost productivity by combining tools like Pomodoro
-          timers, Notes, and Checklists into one cohesive hub. Each section is
+          timer, Notes, and Checklist into one cohesive hub. Each section is
           built with a modern, sleek design and smooth animations. Feel free to
           explore and enjoy the experience!
         </p>
