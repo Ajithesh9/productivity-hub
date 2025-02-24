@@ -101,7 +101,7 @@ function Checklist() {
         }
       }
     },
-    [unfinishedTasks, finishedTasks]
+    [unfinishedTasks, finishedTasks, setUnfinishedTasks, setFinishedTasks]
   );
 
   return (
