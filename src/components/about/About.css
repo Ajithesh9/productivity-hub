@@ -113,3 +113,19 @@
   color: #bb86fc; /* Purple shine effect on hover */
   transform: scale(1.05);
 }
+.hl {
+  transition: color 0.3s ease;
+}
+
+.hl:hover {
+  background-color: #bb86fc;
+}
+
+.layout.dark .hl,
+body.dark-mode .hl {
+  color: #333333; /* Dark grey as base */
+}
+
+.layout.dark .hl:hover {
+  color: #bb86fc;
+}
