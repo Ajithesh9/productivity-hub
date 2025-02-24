@@ -2,6 +2,10 @@ import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import "./Pomodoro.css";
 
+// Import alarm audio files from assets
+import workAlarm from "../../assets/Work-Alarm-trigger.mp3";
+import breakStart from "../../assets/Break-time-start.mp3";
+
 // Custom hook for localStorage persistence
 function useLocalStorage(key, initialValue) {
   const [storedValue, setStoredValue] = useState(() => {
@@ -54,6 +58,7 @@ function Pomodoro() {
   const timerRef = useRef(null);
 
   // On mount, if the timer was running, calculate elapsed time while unmounted.
+  // This effect is intentionally run only once.
   useEffect(() => {
     if (isRunning && startTimestamp) {
       const elapsed = Math.floor((Date.now() - startTimestamp) / 1000);
@@ -63,6 +68,7 @@ function Pomodoro() {
         setStartTimestamp(Date.now());
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Run once on mount
 
   const totalDuration = isWork ? workTime : breakTime;
@@ -82,6 +88,11 @@ function Pomodoro() {
     } else if (isRunning && timeLeft === 0) {
       clearInterval(timerRef.current);
       if (isWork) {
+        // Play work alarm sound when work session ends
+        const alarm = new Audio(workAlarm);
+        alarm.volume = 0.35;
+        alarm.play();
+
         if (Notification.permission === "granted") {
           new Notification(
             "Work session ended! Break will start in 10 seconds."
@@ -94,6 +105,10 @@ function Pomodoro() {
           setTimeLeft(breakTime);
           setStartTimestamp(Date.now());
           setIsRunning(true);
+          // Play break start sound when break session begins
+          const breakSound = new Audio(breakStart);
+          breakSound.volume = 0.35;
+          breakSound.play();
         }, 10000);
       } else {
         if (Notification.permission === "granted") {
@@ -122,6 +137,7 @@ function Pomodoro() {
     setIsWork,
     setWorkTime,
     setBreakTime,
+    setStartTimestamp,
   ]);
 
   useEffect(() => {
@@ -190,6 +206,13 @@ function Pomodoro() {
     }
   };
 
+  // Determine button text: "Pause" if running; if paused and timeLeft < total, "Resume"; else "Start"
+  const startButtonText = isRunning
+    ? "Pause"
+    : timeLeft < (isWork ? workTime : breakTime)
+    ? "Resume"
+    : "Start";
+
   return (
     <div className="pomodoro">
       <h1 className="pomodoro-title">Pomodoro Timer</h1>
@@ -225,7 +248,7 @@ function Pomodoro() {
       />
       <div className="controls">
         <button onClick={handleStartPause} className="start-pause-btn">
-          {isRunning ? "Pause" : "Start"}
+          {startButtonText}
         </button>
         <button onClick={handleCancel} className="cancel-btn">
           Cancel
