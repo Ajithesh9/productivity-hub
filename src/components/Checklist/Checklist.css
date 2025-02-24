@@ -1,4 +1,6 @@
 :root {
+  --base-font-size: 16px;
+  --font-family: "Inter", sans-serif;
   --text-color: #333;
   --input-bg: #f5f5f5;
   --item-bg: #fff;
@@ -30,8 +32,9 @@
   margin: 0 auto;
   padding: var(--spacing-lg);
   background: var(--item-bg);
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  font-family: var(--font-family);
+  font-size: var(--base-font-size);
+  user-select: none;
 }
 
 .add-task {
@@ -52,6 +55,7 @@
   background: var(--input-bg);
   color: var(--text-color);
   transition: border-color 0.3s;
+  font-size: 1rem;
 }
 
 .add-task-input:focus {
@@ -68,6 +72,8 @@
   cursor: pointer;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s, box-shadow 0.3s;
+  font-size: 1rem;
+  font-weight: 500;
 }
 
 .add-task-btn:hover {
@@ -94,6 +100,8 @@
   margin-bottom: var(--spacing-md);
   color: var(--text-color);
   text-align: center;
+  font-size: 1.5em;
+  font-weight: 600;
 }
 
 .tasks-list {
@@ -121,16 +129,18 @@
 
 .task-text {
   flex: 1;
-  max-width: calc(100% - 80px); /* Adjust based on delete button width */
+  max-width: calc(100% - 80px);
   margin-right: var(--spacing-md);
   color: var(--text-color);
   word-wrap: break-word;
   overflow: hidden;
   text-overflow: ellipsis;
+  font-size: 1rem;
+  line-height: 1.5;
 }
 
 .task-actions {
-  min-width: 60px; /* Ensure enough space for the button */
+  min-width: 60px;
 }
 
 .btn {
@@ -140,6 +150,8 @@
   cursor: pointer;
   transition: background-color 0.3s, transform 0.2s;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  font-size: 0.9rem;
+  font-weight: 500;
 }
 
 .btn:hover {
@@ -169,10 +181,16 @@
   text-align: center;
   padding: var(--spacing-lg);
   color: var(--text-color);
+  font-size: 1rem;
 }
 
 @media (max-width: 768px) {
   .columns {
     flex-direction: column;
   }
+}
+/* Add this class for strikethrough animation */
+.task-text.completed {
+  text-decoration: line-through;
+  transition: text-decoration 0.3s ease;
 }
