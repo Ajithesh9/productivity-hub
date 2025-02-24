@@ -1,10 +1,8 @@
 .about-page {
   max-width: 800px;
-  margin: 2rem auto;
+  margin: 0.5rem auto; /* Moved section up */
   padding: 2rem;
   background: var(--item-bg, #fff);
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   font-family: var(--font-family, "Inter", sans-serif);
   color: var(--text-color, #333);
   user-select: none;
@@ -18,6 +16,100 @@
 
 .about-page p {
   line-height: 1.6;
-  margin-bottom: 1rem;
+  margin-bottom: 1.25rem; /* Increased spacing */
   font-size: 1rem;
+}
+
+/* Inline code styling */
+.about-page code {
+  display: inline-block;
+  margin: 0 2px;
+  line-height: 0.7em;
+  font-size: 1rem;
+  background: #f4f4f4;
+  color: #333;
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+  font-family: monospace;
+  transition: background 0.3s, color 0.3s;
+}
+
+/* Dark mode code styling */
+.layout.dark .about-page code {
+  background: #444;
+  color: #ddd;
+}
+
+/* Side headings with vertical accent */
+.about-page h2 {
+  position: relative;
+  margin-top: 1.5rem;
+  margin-bottom: 1rem; /* Increased bottom margin */
+  font-size: 1.5em;
+  padding-left: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 12px; /* Increased gap between heading text and icon */
+}
+
+/* Base rule for accent pseudo-element */
+.about-page h2::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 80%;
+  border-radius: 2px;
+}
+
+/* Accent Colors for Headings */
+.about-page h2.accent-red::before {
+  background: #e74c3c;
+}
+.about-page h2.accent-yellow::before {
+  background: #f1c40f;
+}
+.about-page h2.accent-purple::before {
+  background: #9b59b6;
+}
+.about-page h2.accent-blue::before {
+  background: #3498db;
+}
+.about-page h2.accent-orange::before {
+  background: #e67e22;
+}
+
+.about-section {
+  margin-bottom: 2rem;
+}
+
+.about-section ul {
+  list-style: disc;
+  padding-left: 20px;
+  margin-top: 0.5rem;
+}
+
+.about-section a {
+  color: var(--primary-color);
+  text-decoration: underline;
+  transition: color 0.3s;
+}
+
+.about-section a:hover {
+  color: var(--secondary-color);
+}
+
+/* Unique styling for "Ajithesh" */
+.unique-name {
+  font-size: 1.5em; /* Increased size for extra emphasis */
+  font-weight: bold;
+  color: var(--primary-color);
+  transition: color 0.3s, transform 0.3s;
+}
+
+.unique-name:hover {
+  color: #bb86fc; /* Purple shine effect on hover */
+  transform: scale(1.05);
 }
