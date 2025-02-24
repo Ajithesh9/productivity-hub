@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Outlet } from "react-router-dom";
 import Navbar from "./Navbar/Navbar";
 import MusicPlayer from "./MusicPlayer/MusicPlayer";
+import ThemeToggle from "./ThemeToggle/ThemeToggle"; // Import the new ThemeToggle component
 import "./Layout.css";
 
 function Layout() {
@@ -17,19 +18,17 @@ function Layout() {
   };
 
   return (
-    <div className={`layout ${theme}`}>
+    <div className={`layout ${theme}`} data-theme={theme}>
       <Navbar onWidthChange={handleNavbarWidthChange} />
       <div className="content" style={{ marginLeft: navbarWidth }}>
         <header className="header">
-          <button onClick={toggleTheme} className="theme-toggle">
-            {theme === "light" ? "Dark Mode" : "Light Mode"}
-          </button>
+          {/* Use the new creative ThemeToggle component */}
+          <ThemeToggle theme={theme} toggleTheme={toggleTheme} />
         </header>
         <main>
           <Outlet />
         </main>
       </div>
-      {/* Removed the Quotes component */}
       <MusicPlayer />
     </div>
   );
