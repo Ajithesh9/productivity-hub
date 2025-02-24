@@ -1,13 +1,13 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import "./MusicPlayer.css";
 
-// Import icons from your assets folder (adjusted paths)
+// Import icons from your assets folder
 import prevIcon from "../../assets/icons/prev.svg";
 import playIcon from "../../assets/icons/play.svg";
 import pauseIcon from "../../assets/icons/pause.svg";
 import nextIcon from "../../assets/icons/next.svg";
 
-// Import music files from your assets folder (adjusted paths)
+// Import music files from your assets folder
 import rainyDayTrack from "../../assets/music/Rainy Day.mp3";
 
 function MusicPlayer() {
@@ -17,6 +17,13 @@ function MusicPlayer() {
 
   // Define the tracks with names matching the file names (without extension)
   const tracks = [{ name: "Rainy Day", src: rainyDayTrack }];
+
+  // Set the volume to 35% on mount and when currentTrack changes
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.volume = 0.35;
+    }
+  }, [currentTrack]);
 
   const togglePlay = async () => {
     if (isPlaying) {
@@ -33,12 +40,13 @@ function MusicPlayer() {
   };
 
   const changeTrack = (index) => {
-    audioRef.current.src = tracks[index].src;
-    // Ensure volume remains at 40%
-    audioRef.current.volume = 0.4;
-    if (isPlaying) {
-      // Auto-play the new track if one was already playing
-      audioRef.current.play();
+    setCurrentTrack(index); // Update currentTrack state (this fixes the linter warning)
+    if (audioRef.current) {
+      audioRef.current.src = tracks[index].src;
+      audioRef.current.currentTime = 0;
+      if (isPlaying) {
+        audioRef.current.play();
+      }
     }
   };
 
