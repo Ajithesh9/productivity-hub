@@ -7,22 +7,14 @@
   --secondary-color: #ff9800;
   --border-color-dark: #34495e;
   --border-color-light: #cccccc;
-  --idle-gradient: linear-gradient(
-    135deg,
-    #bdc3c7,
-    #ecf0f1
-  ); /* Soft gradient for idle state */
+  --idle-gradient: linear-gradient(135deg, #bdc3c7, #ecf0f1);
 }
 
 body.dark-mode {
   --background-color: var(--background-color-dark);
   --text-color: var(--text-color-dark);
   --border-color: var(--border-color-dark);
-  --idle-gradient: linear-gradient(
-    135deg,
-    #34495e,
-    #2c3e50
-  ); /* Dark mode idle gradient */
+  --idle-gradient: linear-gradient(135deg, #34495e, #2c3e50);
 }
 
 body.light-mode {
@@ -38,7 +30,7 @@ body.light-mode {
   background: var(--background-color);
   padding: 10px;
   border: 1px solid var(--border-color);
-  border-radius: 25px; /* Pill shape */
+  border-radius: 25px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -46,15 +38,14 @@ body.light-mode {
   transition: all 0.5s ease-in-out 0.1s;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   overflow: hidden;
-  width: 50px; /* Initial compact size */
+  width: 50px;
   height: auto;
-  /* Enable container queries on this element */
   container-type: inline-size;
-  user-select: none; /* Prevent text selection */
+  user-select: none;
 }
 
 .music-player * {
-  user-select: none; /* Ensure all children are not selectable */
+  user-select: none;
 }
 
 /* Compact Pill Design */
@@ -63,16 +54,16 @@ body.light-mode {
   width: 50px;
   height: 50px;
   border-radius: 50%;
-  background: var(--idle-gradient); /* Subtle gradient for idle state */
+  background: var(--idle-gradient);
   display: flex;
   justify-content: center;
   align-items: center;
   transition: background 0.5s ease-in-out, box-shadow 0.3s ease-in-out;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
 }
 
 .music-player:hover .compact-icon {
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Stronger glow on hover */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 }
 
 .music-player.playing .compact-icon {
@@ -81,8 +72,8 @@ body.light-mode {
     var(--primary-color),
     var(--secondary-color)
   );
-  animation: gradient-animate 3s infinite alternate; /* Smooth gradient animation */
-  box-shadow: 0 0 15px rgba(25, 118, 210, 0.5); /* Glowing effect when playing */
+  animation: gradient-animate 3s infinite alternate;
+  box-shadow: 0 0 15px rgba(25, 118, 210, 0.5);
 }
 
 @keyframes gradient-animate {
@@ -95,21 +86,21 @@ body.light-mode {
 }
 
 .music-player .compact-icon::after {
-  content: "🎵"; /* Music Note Icon */
+  content: "🎵";
   font-size: 24px;
   color: var(--text-color);
   transition: transform 0.3s ease-in-out;
 }
 
 .music-player.playing .compact-icon::after {
-  transform: scale(1.2); /* Slightly enlarge the icon when playing */
+  transform: scale(1.2);
 }
 
 .music-player:hover {
-  width: 350px; /* Expanded size */
+  width: 350px;
 }
 
-/* Track Info: by default hidden */
+/* Track Info */
 .music-player .track-info {
   font-family: "Roboto", sans-serif;
   font-size: 0px;
@@ -123,7 +114,6 @@ body.light-mode {
   opacity: 0;
 }
 
-/* Only reveal track info when container width is at least 92px */
 @container (min-width: 92px) {
   .music-player.playing .track-info {
     font-size: 18px;
@@ -157,11 +147,16 @@ body.light-mode {
 }
 
 .music-player button:hover {
-  transform: scale(1.2); /* Scale up buttons on hover */
+  transform: scale(1.2);
 }
 
 .music-player button img {
   width: 20px;
   height: 20px;
-  filter: brightness(0) invert(1); /* Invert colors for dark mode */
+  filter: brightness(0) invert(1); /* Default: white icons (for dark mode) */
+}
+
+/* Override for light mode: use black icons */
+.layout.light .music-player button img {
+  filter: brightness(0) invert(0);
 }
