@@ -22,8 +22,6 @@
   font-family: var(--font-family);
   font-size: var(--base-font-size);
   background: var(--item-bg);
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .notes-page h2 {
@@ -40,7 +38,6 @@
   padding: var(--spacing-md);
   background: var(--item-bg);
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 /* Ensure consistent box-sizing and typography for both input and textarea */
