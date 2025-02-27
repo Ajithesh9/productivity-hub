@@ -1,136 +1,130 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@500;600&display=swap");
-
-.navbar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 100vh;
-  width: 70px;
-  background: var(--background-color);
-  border-right: 1px solid var(--border-color);
-  transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
-  user-select: none;
-  overflow: hidden;
+.about-page {
+  max-width: 800px;
+  margin: 0.5rem auto; /* Moved section up */
+  padding: 2rem;
+  background: var(--item-bg, #fff);
+  font-family: var(--font-family, "Inter", sans-serif);
+  color: var(--text-color, #333);
 }
 
-.navbar:hover {
-  width: 220px;
+.about-page h1 {
+  margin-bottom: 1rem;
+  font-size: 2em;
+  text-align: center;
 }
 
-.navbar ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  height: 100%;
+.about-page p {
+  line-height: 1.6;
+  margin-bottom: 1.25rem; /* Increased spacing */
+  font-size: 1rem;
 }
 
-.navbar li {
-  display: flex;
-  align-items: center;
-  transition: background 0.3s ease-in-out;
-  cursor: pointer;
+/* Inline code styling */
+.about-page code {
+  display: inline-block;
+  margin: 0 2px;
+  line-height: 0.7em;
+  font-size: 1rem;
+  background: #f4f4f4;
+  color: #333;
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+  font-family: monospace;
+  transition: background 0.3s, color 0.3s;
+}
+
+/* Dark mode code styling */
+.layout.dark .about-page code {
+  background: #444;
+  color: #ddd;
+}
+
+/* Side headings with vertical accent */
+.about-page h2 {
   position: relative;
-  padding: 0; /* Removed padding from li */
-}
-
-.navbar li.active {
-  border-left: 3px solid #2ecc71;
-  padding-left: 0; /* Reset padding */
-}
-
-.navbar li.active a {
-  padding-left: 12px; /* Compensate for border */
-}
-
-.navbar li:nth-child(1).active {
-  border-left-color: #e74c3c;
-}
-
-.navbar li:nth-child(2).active {
-  border-left-color: #f1c40f;
-}
-
-.navbar li:nth-child(3).active {
-  border-left-color: #9b59b6;
-}
-
-.navbar li:nth-child(4).active {
-  border-left-color: #3498db;
-}
-
-.navbar li:not(.about):hover {
-  background: rgba(0, 0, 0, 0.05);
-}
-
-.navbar li a {
-  display: flex;
-  align-items: center;
-  color: var(--text-color);
-  text-decoration: none;
-  font-family: "Inter", sans-serif; /* Updated font */
-  font-size: 14px;
-  font-weight: 500;
-  letter-spacing: 0.5px;
-  padding: 15px; /* Moved padding to anchor */
-  width: 100%; /* Full width clickable area */
-  box-sizing: border-box; /* Include padding in width */
-}
-
-.navbar li .icon {
+  margin-top: 1.5rem;
+  margin-bottom: 1rem; /* Increased bottom margin */
   font-size: 1.5em;
-  margin-right: 10px;
-  transition: transform 0.3s ease-in-out;
+  padding-left: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 12px; /* Increased gap between heading text and icon */
 }
 
-.navbar li:hover .icon {
-  transform: scale(1.1);
-}
-
-.navbar li .text {
-  opacity: 0;
-  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
-  transform: translateX(-10px);
-}
-
-.navbar:hover li .text {
-  opacity: 1;
-  transform: translateX(0);
-}
-
-.navbar li.about {
-  position: relative;
-  transition: all 0.3s ease-in-out;
-}
-
-.navbar li.about::before {
+/* Base rule for accent pseudo-element */
+.about-page h2::before {
   content: "";
   position: absolute;
-  top: 0;
   left: 0;
-  width: 3px;
-  height: 100%;
-  background: linear-gradient(to bottom, #068c39, #13ba37);
-  opacity: 0;
-  transition: opacity 0.3s ease-in-out;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 80%;
+  border-radius: 2px;
 }
 
-.navbar li.about:hover::before {
-  opacity: 1;
+/* Accent Colors for Headings */
+.about-page h2.accent-red::before {
+  background: #e74c3c;
+}
+.about-page h2.accent-yellow::before {
+  background: #f1c40f;
+}
+.about-page h2.accent-purple::before {
+  background: #9b59b6;
+}
+.about-page h2.accent-blue::before {
+  background: #3498db;
+}
+.about-page h2.accent-orange::before {
+  background: #e67e22;
 }
 
-.navbar li.about a {
-  font-weight: 600;
-  color: rgb(235, 136, 246);
-  transition: color 0.3s ease-in-out;
+.about-section {
+  margin-bottom: 2rem;
 }
 
-.navbar li.about:hover a {
-  color: chocolate;
+.about-section ul {
+  list-style: disc;
+  padding-left: 20px;
+  margin-top: 0.5rem;
 }
 
-.navbar li.about:hover {
-  background: rgba(71, 0, 52, 0.1);
+.about-section a {
+  color: var(--primary-color);
+  text-decoration: underline;
+  transition: color 0.3s;
+}
+
+.about-section a:hover {
+  color: var(--secondary-color);
+}
+
+/* Unique styling for "Ajithesh" */
+.unique-name {
+  font-size: 1.5em; /* Increased size for extra emphasis */
+  font-weight: bold;
+  color: var(--primary-color);
+  transition: color 0.3s, transform 0.3s;
+}
+
+.unique-name:hover {
+  color: #bb86fc; /* Purple shine effect on hover */
+  transform: scale(1.05);
+}
+.hl {
+  transition: color 0.3s ease;
+}
+
+.hl:hover {
+  background-color: #bb86fc;
+}
+
+.layout.dark .hl,
+body.dark-mode .hl {
+  color: #333333; /* Dark grey as base */
+}
+
+.layout.dark .hl:hover {
+  color: #bb86fc;
 }
