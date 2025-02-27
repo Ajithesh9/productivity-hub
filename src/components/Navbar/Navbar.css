@@ -1,18 +1,20 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@500;600&display=swap");
+
 .navbar {
-  position: fixed; /* Fixes the navbar on the left */
+  position: fixed;
   top: 0;
   left: 0;
   height: 100vh;
-  width: 70px; /* Default narrow width */
+  width: 70px;
   background: var(--background-color);
   border-right: 1px solid var(--border-color);
-  transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1); /* Smooth transition effect */
+  transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
   user-select: none;
   overflow: hidden;
 }
 
 .navbar:hover {
-  width: 220px; /* Wider width when hovered */
+  width: 220px;
 }
 
 .navbar ul {
@@ -21,45 +23,46 @@
   margin: 0;
   display: flex;
   flex-direction: column;
-  justify-content: center; /* Center content vertically */
-  height: 100%; /* Full height of the navbar */
+  justify-content: center;
+  height: 100%;
 }
 
 .navbar li {
-  padding: 15px;
   display: flex;
   align-items: center;
-  transition: background 0.3s ease-in-out; /* Smooth transition for hover effects */
+  transition: background 0.3s ease-in-out;
   cursor: pointer;
-  position: relative; /* Needed for positioning the left border */
+  position: relative;
+  padding: 0;
 }
 
-/* Left border only visible when active */
 .navbar li.active {
-  border-left: 3px solid #2ecc71; /* Green border for active state */
-  padding-left: 12px; /* Adjust padding to account for border */
+  border-left: 3px solid #2ecc71;
+  padding-left: 0;
 }
 
-/* Unique left border colors for each active button */
+.navbar li.active a {
+  padding-left: 12px;
+}
+
 .navbar li:nth-child(1).active {
-  border-left-color: #e74c3c; /* Red */
+  border-left-color: #e74c3c;
 }
 
 .navbar li:nth-child(2).active {
-  border-left-color: #f1c40f; /* Yellow */
+  border-left-color: #f1c40f;
 }
 
 .navbar li:nth-child(3).active {
-  border-left-color: #9b59b6; /* Purple (for About) */
+  border-left-color: #9b59b6;
 }
 
 .navbar li:nth-child(4).active {
-  border-left-color: #3498db; /* Blue */
+  border-left-color: #3498db;
 }
 
-/* Hover effect for buttons (except About) */
 .navbar li:not(.about):hover {
-  background: rgba(0, 0, 0, 0.05); /* Lighter background color on hover */
+  background: rgba(0, 0, 0, 0.05);
 }
 
 .navbar li a {
@@ -67,40 +70,46 @@
   align-items: center;
   color: var(--text-color);
   text-decoration: none;
-  font-family: "Roboto", sans-serif; /* Modern font family */
-  font-size: 14px; /* Slightly smaller font size */
-  font-weight: 500; /* Medium font weight */
-  letter-spacing: 0.5px; /* Slightly spaced out letters */
+  font-family: "Poppins", sans-serif;
+  font-size: 17.5px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  padding: 15px 10px; /* Adjusted horizontal padding */
+  width: 100%;
+  box-sizing: border-box;
+  min-width: 60px; /* Ensure minimum width for narrow state */
 }
 
 .navbar li .icon {
+  padding-right: 8px;
+  padding-left: 2.5px;
   font-size: 1.5em;
-  margin-right: 10px;
-  transition: transform 0.3s ease-in-out; /* Icon grows slightly on hover */
+  margin-right: 8px; /* Reduced margin for better spacing */
+  transition: transform 0.3s ease-in-out;
+  flex-shrink: 0; /* Prevent icon shrinking */
 }
 
 .navbar li:hover .icon {
-  transform: scale(1.1); /* Slight scaling effect for icons */
+  transform: scale(1.1);
 }
 
 .navbar li .text {
   opacity: 0;
-  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out; /* Smooth fade-in effect */
-  transform: translateX(-10px); /* Start slightly off-screen */
+  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+  transform: translateX(-10px);
+  white-space: nowrap; /* Prevent text wrapping */
 }
 
 .navbar:hover li .text {
   opacity: 1;
-  transform: translateX(0); /* Slide into view */
+  transform: translateX(0);
 }
 
-/* Enhanced uniqueness for the About Section Button */
 .navbar li.about {
   position: relative;
-  transition: all 0.3s ease-in-out; /* Smooth transition for hover effects */
+  transition: all 0.3s ease-in-out;
 }
 
-/* Gradient Border Effect for About Section */
 .navbar li.about::before {
   content: "";
   position: absolute;
@@ -108,34 +117,25 @@
   left: 0;
   width: 3px;
   height: 100%;
-  background: linear-gradient(
-    to bottom,
-    #068c39,
-    #13ba37
-  ); /* Deep purple to lighter purple gradient */
+  background: linear-gradient(to bottom, #068c39, #13ba37);
   opacity: 0;
   transition: opacity 0.3s ease-in-out;
 }
 
 .navbar li.about:hover::before {
-  opacity: 1; /* Show gradient border on hover */
+  opacity: 1;
 }
 
 .navbar li.about a {
-  font-weight: 600; /* Bold font for the About section */
-  color: rgb(235, 136, 246); /* Deep purple text color */
-  transition: color 0.3s ease-in-out; /* Smooth color transition */
+  font-weight: 600;
+  color: rgb(235, 136, 246);
+  transition: color 0.3s ease-in-out;
 }
 
 .navbar li.about:hover a {
-  color: chocolate; /* Light pink text color on hover */
+  color: chocolate;
 }
 
 .navbar li.about:hover {
-  background: rgba(
-    71,
-    0,
-    52,
-    0.1
-  ); /* Light version of #470034 as background on hover */
+  background: rgba(71, 0, 52, 0.1);
 }
