@@ -3,25 +3,21 @@
   align-items: center;
   gap: 8px;
   padding: 8px 12px;
-  border: 2px solid;
   border-radius: 25px;
   font-size: 0.9rem;
+  border: 2px solid;
   cursor: pointer;
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-/* Light Mode: button is black with white text/icons */
-body.light-mode .theme-toggle-button {
-  background-color: #000000;
-  color: #000000;
-  border-color: #000000;
+.theme-toggle-button:hover {
+  transform: scale(1.05);
 }
 
-/* Dark Mode: button is white with black text/icons */
-body.dark-mode .theme-toggle-button {
-  background-color: #ffffff;
-  color: #ffffff;
-  border-color: #ffffff;
+.theme-toggle-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .theme-toggle-icon {
@@ -32,4 +28,20 @@ body.dark-mode .theme-toggle-button {
 
 .theme-toggle-text {
   font-weight: 500;
+}
+
+/* Force light mode styling for the toggle button */
+body.light-mode .theme-toggle-button,
+.layout.light-mode .theme-toggle-button {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+  border-color: #000000 !important;
+}
+
+/* Force dark mode styling for the toggle button */
+body.dark-mode .theme-toggle-button,
+.layout.dark-mode .theme-toggle-button {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+  border-color: #ffffff !important;
 }
