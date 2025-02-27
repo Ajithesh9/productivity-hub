@@ -1,80 +1,35 @@
-@import "https://unpkg.com/open-props/easings.min.css";
-
-/* Set transform origin for all elements inside the SVG */
-.sun-and-moon > :is(.moon, .sun, .sun-beams) {
-  transform-origin: center;
+.theme-toggle-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border: 2px solid;
+  border-radius: 25px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-.sun-and-moon > :is(.moon, .sun) {
-  fill: var(--icon-fill, currentColor);
+/* Light Mode: button is black with white text/icons */
+body.light-mode .theme-toggle-button {
+  background-color: #000000;
+  color: #000000;
+  border-color: #000000;
 }
 
-.theme-toggle:is(:hover, :focus-visible) > .sun-and-moon > :is(.moon, .sun) {
-  fill: var(--icon-fill-hover, currentColor);
+/* Dark Mode: button is white with black text/icons */
+body.dark-mode .theme-toggle-button {
+  background-color: #ffffff;
+  color: #ffffff;
+  border-color: #ffffff;
 }
 
-.sun-and-moon > .sun-beams {
-  stroke: var(--icon-fill, currentColor);
-  stroke-width: 2px;
+.theme-toggle-icon {
+  width: 20px;
+  height: 20px;
+  stroke-width: 2;
 }
 
-.theme-toggle:is(:hover, :focus-visible) .sun-and-moon > .sun-beams {
-  stroke: var(--icon-fill-hover, currentColor);
-}
-
-/* Dark mode adjustments */
-[data-theme="dark"] .sun-and-moon > .sun {
-  transform: scale(1.75);
-}
-
-[data-theme="dark"] .sun-and-moon > .sun-beams {
-  opacity: 0;
-}
-
-[data-theme="dark"] .sun-and-moon > .moon > circle {
-  transform: translateX(-7px);
-}
-
-@supports (cx: 1) {
-  [data-theme="dark"] .sun-and-moon > .moon > circle {
-    cx: 17;
-    transform: translateX(0);
-  }
-}
-
-/* Transition animations */
-@media (prefers-reduced-motion: no-preference) {
-  .sun-and-moon > .sun {
-    transition: transform 0.5s var(--ease-elastic-3);
-  }
-
-  .sun-and-moon > .sun-beams {
-    transition: transform 0.5s var(--ease-elastic-4), opacity 0.5s var(--ease-3);
-  }
-
-  .sun-and-moon .moon > circle {
-    transition: transform 0.25s var(--ease-out-5);
-  }
-
-  @supports (cx: 1) {
-    .sun-and-moon .moon > circle {
-      transition: cx 0.25s var(--ease-out-5);
-    }
-  }
-
-  [data-theme="dark"] .sun-and-moon > .sun {
-    transition-timing-function: var(--ease-3);
-    transition-duration: 0.25s;
-    transform: scale(1.75);
-  }
-
-  [data-theme="dark"] .sun-and-moon > .sun-beams {
-    transition-duration: 0.15s;
-    transform: rotateZ(-25deg);
-  }
-
-  [data-theme="dark"] .sun-and-moon > .moon > circle {
-    transition-duration: 0.5s;
-    transition-delay: 0.25s;
-  }
+.theme-toggle-text {
+  font-weight: 500;
 }
