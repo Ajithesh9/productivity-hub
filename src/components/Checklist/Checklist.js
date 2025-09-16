@@ -1,9 +1,9 @@
 import React, { useState, useCallback } from "react";
+import { useOutletContext } from "react-router-dom";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { v4 as uuidv4 } from "uuid";
 import "./Checklist.css";
 
-// Custom hook for localStorage persistence
 function useLocalStorage(key, initialValue) {
   const [storedValue, setStoredValue] = useState(() => {
     try {
@@ -27,6 +27,7 @@ function useLocalStorage(key, initialValue) {
 }
 
 function Checklist() {
+  const { user, loading } = useOutletContext();
   const [unfinishedTasks, setUnfinishedTasks] = useLocalStorage(
     "checklist_unfinishedTasks",
     []
@@ -39,10 +40,7 @@ function Checklist() {
 
   const addTask = () => {
     if (input.trim()) {
-      const newTask = {
-        id: uuidv4(),
-        text: input.slice(0, 80),
-      };
+      const newTask = { id: uuidv4(), text: input.slice(0, 80) };
       setUnfinishedTasks((prev) => [...prev, newTask]);
       setInput("");
     }
@@ -60,152 +58,110 @@ function Checklist() {
     (result) => {
       const { source, destination } = result;
       if (!destination) return;
+      if (source.droppableId === destination.droppableId && source.index === destination.index) return;
 
-      const sourceIndex = source.index;
-      const destIndex = destination.index;
-      const sourceDroppable = source.droppableId;
-      const destDroppable = destination.droppableId;
+      const startList = source.droppableId === "unfinished" ? [...unfinishedTasks] : [...finishedTasks];
+      const endList = destination.droppableId === "unfinished" ? [...unfinishedTasks] : [...finishedTasks];
+      const [movedTask] = startList.splice(source.index, 1);
 
-      if (sourceDroppable === destDroppable) {
-        // Reordering within the same column
-        if (sourceDroppable === "unfinished") {
-          const newUnfinished = [...unfinishedTasks];
-          const [movedTask] = newUnfinished.splice(sourceIndex, 1);
-          newUnfinished.splice(destIndex, 0, movedTask);
-          setUnfinishedTasks(newUnfinished);
+      if (source.droppableId === destination.droppableId) {
+        startList.splice(destination.index, 0, movedTask);
+        if (source.droppableId === "unfinished") {
+          setUnfinishedTasks(startList);
         } else {
-          const newFinished = [...finishedTasks];
-          const [movedTask] = newFinished.splice(sourceIndex, 1);
-          newFinished.splice(destIndex, 0, movedTask);
-          setFinishedTasks(newFinished);
+          setFinishedTasks(startList);
         }
       } else {
-        // Moving between columns
-        if (sourceDroppable === "unfinished" && destDroppable === "finished") {
-          const newUnfinished = [...unfinishedTasks];
-          const newFinished = [...finishedTasks];
-          const [movedTask] = newUnfinished.splice(sourceIndex, 1);
-          newFinished.splice(destIndex, 0, movedTask);
-          setUnfinishedTasks(newUnfinished);
-          setFinishedTasks(newFinished);
-        } else if (
-          sourceDroppable === "finished" &&
-          destDroppable === "unfinished"
-        ) {
-          const newUnfinished = [...unfinishedTasks];
-          const newFinished = [...finishedTasks];
-          const [movedTask] = newFinished.splice(sourceIndex, 1);
-          newUnfinished.splice(destIndex, 0, movedTask);
-          setUnfinishedTasks(newUnfinished);
-          setFinishedTasks(newFinished);
+        endList.splice(destination.index, 0, movedTask);
+        if (source.droppableId === "unfinished") {
+          setUnfinishedTasks(startList);
+          setFinishedTasks(endList);
+        } else {
+          setFinishedTasks(startList);
+          setUnfinishedTasks(endList);
         }
       }
     },
     [unfinishedTasks, finishedTasks, setUnfinishedTasks, setFinishedTasks]
   );
 
+  if (loading) {
+    return <h2>Loading...</h2>;
+  }
+
   return (
     <div className="checklist-page">
       <h2>Checklist</h2>
-      <div className="add-task">
-        <input
-          type="text"
-          placeholder="Add a task..."
-          value={input}
-          maxLength={80}
-          onChange={(e) => setInput(e.target.value)}
-          className="add-task-input"
-        />
-        <button onClick={addTask} className="add-task-btn">
-          Add
-        </button>
-      </div>
-      <DragDropContext onDragEnd={onDragEnd}>
-        <div className="columns">
-          <div className="column">
-            <h3>Unfinished Tasks</h3>
-            <Droppable droppableId="unfinished">
-              {(provided) => (
-                <ul
-                  className="tasks-list"
-                  ref={provided.innerRef}
-                  {...provided.droppableProps}
-                >
-                  {unfinishedTasks.map((task, index) => (
-                    <Draggable
-                      key={task.id}
-                      draggableId={task.id}
-                      index={index}
-                    >
-                      {(provided) => (
-                        <li
-                          ref={provided.innerRef}
-                          {...provided.draggableProps}
-                          {...provided.dragHandleProps}
-                          className="task-item"
-                        >
-                          <span className="task-text">{task.text}</span>
-                          <div className="task-actions">
-                            <button
-                              onClick={() => deleteTask(task.id, true)}
-                              className="btn delete-btn"
-                            >
-                              Delete
-                            </button>
-                          </div>
-                        </li>
-                      )}
-                    </Draggable>
-                  ))}
-                  {provided.placeholder}
-                </ul>
-              )}
-            </Droppable>
+      {user ? (
+        <>
+          <div className="add-task">
+            <input
+              type="text"
+              placeholder="Add a task..."
+              value={input}
+              maxLength={80}
+              onChange={(e) => setInput(e.target.value)}
+              className="add-task-input"
+            />
+            <button onClick={addTask} className="add-task-btn">
+              Add
+            </button>
           </div>
-          <div className="column">
-            <h3>Finished Tasks</h3>
-            <Droppable droppableId="finished">
-              {(provided) => (
-                <ul
-                  className="tasks-list"
-                  ref={provided.innerRef}
-                  {...provided.droppableProps}
-                >
-                  {finishedTasks.map((task, index) => (
-                    <Draggable
-                      key={task.id}
-                      draggableId={task.id}
-                      index={index}
-                    >
-                      {(provided) => (
-                        <li
-                          ref={provided.innerRef}
-                          {...provided.draggableProps}
-                          {...provided.dragHandleProps}
-                          className="task-item"
-                        >
-                          <span className="task-text completed">
-                            {task.text}
-                          </span>
-                          <div className="task-actions">
-                            <button
-                              onClick={() => deleteTask(task.id, false)}
-                              className="btn delete-btn"
-                            >
-                              Delete
-                            </button>
-                          </div>
-                        </li>
-                      )}
-                    </Draggable>
-                  ))}
-                  {provided.placeholder}
-                </ul>
-              )}
-            </Droppable>
-          </div>
+          <DragDropContext onDragEnd={onDragEnd}>
+            <div className="columns">
+              <div className="column">
+                <h3>Unfinished Tasks</h3>
+                <Droppable droppableId="unfinished">
+                  {(provided) => (
+                    <ul className="tasks-list" ref={provided.innerRef} {...provided.droppableProps}>
+                      {unfinishedTasks.map((task, index) => (
+                        <Draggable key={task.id} draggableId={task.id} index={index}>
+                          {(provided) => (
+                            <li ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} className="task-item">
+                              <span className="task-text">{task.text}</span>
+                              <div className="task-actions">
+                                <button onClick={() => deleteTask(task.id, true)} className="btn delete-btn">Delete</button>
+                              </div>
+                            </li>
+                          )}
+                        </Draggable>
+                      ))}
+                      {provided.placeholder}
+                    </ul>
+                  )}
+                </Droppable>
+              </div>
+              <div className="column">
+                <h3>Finished Tasks</h3>
+                <Droppable droppableId="finished">
+                  {(provided) => (
+                    <ul className="tasks-list" ref={provided.innerRef} {...provided.droppableProps}>
+                      {finishedTasks.map((task, index) => (
+                        <Draggable key={task.id} draggableId={task.id} index={index}>
+                          {(provided) => (
+                            <li ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} className="task-item">
+                              <span className="task-text completed">{task.text}</span>
+                              <div className="task-actions">
+                                <button onClick={() => deleteTask(task.id, false)} className="btn delete-btn">Delete</button>
+                              </div>
+                            </li>
+                          )}
+                        </Draggable>
+                      ))}
+                      {provided.placeholder}
+                    </ul>
+                  )}
+                </Droppable>
+              </div>
+            </div>
+          </DragDropContext>
+        </>
+      ) : (
+        <div className="feature-locked">
+          <h2>Sign in to access your Checklist</h2>
+          <p>Please sign in to create, save, and manage your tasks.</p>
         </div>
-      </DragDropContext>
+      )}
     </div>
   );
 }

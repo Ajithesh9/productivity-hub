@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
-// Import modern Lucide React icons
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Clock, FileText, CheckSquare, Info } from "lucide-react";
 import "./Navbar.css";
 
-function Navbar({ onWidthChange }) {
+function Navbar({ onWidthChange, user, openSignInModal }) {
   const [isHovered, setIsHovered] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
 
   const handleMouseEnter = () => setIsHovered(true);
   const handleMouseLeave = () => setIsHovered(false);
@@ -19,6 +19,14 @@ function Navbar({ onWidthChange }) {
     }
   }, [isHovered, onWidthChange, currentWidth]);
 
+  const handleProtectedLinkClick = (path) => {
+    if (user) {
+      navigate(path);
+    } else {
+      openSignInModal();
+    }
+  };
+
   return (
     <div
       className="navbar"
@@ -27,31 +35,30 @@ function Navbar({ onWidthChange }) {
       onMouseLeave={handleMouseLeave}
     >
       <ul>
-        {/* Pomodoro Section */}
         <li className={location.pathname === "/" ? "active" : ""}>
           <Link to="/">
             <Clock className="icon" />
             <span className="text">Pomodoro</span>
           </Link>
         </li>
-
-        {/* Notes Section */}
-        <li className={location.pathname === "/notes" ? "active" : ""}>
-          <Link to="/notes">
+        <li
+          className={location.pathname === "/notes" ? "active" : ""}
+          onClick={() => handleProtectedLinkClick("/notes")}
+        >
+          <a>
             <FileText className="icon" />
             <span className="text">Notes</span>
-          </Link>
+          </a>
         </li>
-
-        {/* Checklist Section */}
-        <li className={location.pathname === "/checklist" ? "active" : ""}>
-          <Link to="/checklist">
+        <li
+          className={location.pathname === "/checklist" ? "active" : ""}
+          onClick={() => handleProtectedLinkClick("/checklist")}
+        >
+          <a>
             <CheckSquare className="icon" />
             <span className="text">Checklist</span>
-          </Link>
+          </a>
         </li>
-
-        {/* About Section */}
         <li className="about">
           <Link to="/about">
             <Info className="icon" />

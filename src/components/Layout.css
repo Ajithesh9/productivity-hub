@@ -7,12 +7,6 @@
   --input-bg: #fff;
   --item-bg: #fff;
   --quote-bg: #fff;
-
-  /* Toggle Button Colors */
-  --toggle-bg-light: #ffffff;
-  --toggle-bg-dark: #2c2c2c;
-  --toggle-glow-light: rgba(0, 0, 0, 0.1);
-  --toggle-glow-dark: rgba(255, 255, 255, 0.2);
 }
 
 .layout.dark {
@@ -44,75 +38,45 @@
 .header {
   display: flex;
   justify-content: flex-end;
+  align-items: center; /* Ensures vertical alignment of buttons */
   padding: 10px;
 }
 
-/* Theme Toggle Button */
-.theme-toggle {
-  position: relative;
-  width: 60px;
-  height: 60px;
-  background: var(--toggle-bg-light);
-  border-radius: 50%;
-  cursor: pointer;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  display: flex;
-  justify-content: center;
+/* Style for Sign In / Sign Out Button */
+.auth-button {
+  display: inline-flex;
   align-items: center;
-  transition: background 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 25px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border: 2px solid;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+  margin-right: 10px; /* Adds space between the buttons */
 }
 
-.layout.dark .theme-toggle {
-  background: var(--toggle-bg-dark);
-  box-shadow: 0 0 15px var(--toggle-glow-dark), 0 4px 6px rgba(0, 0, 0, 0.2);
+.auth-button:hover {
+  transform: scale(1.05);
 }
 
-.theme-toggle svg {
-  width: 24px;
-  height: 24px;
-  color: var(--text-color);
-  transition: transform 0.3s ease-in-out, filter 0.3s ease-in-out;
+.auth-button-icon {
+  width: 20px;
+  height: 20px;
+  stroke-width: 2;
 }
 
-.theme-toggle:hover svg {
-  transform: scale(1.2); /* Slightly enlarge on hover */
+/* Light mode styling for the auth button */
+.layout[data-theme="light"] .auth-button {
+  background-color: #000000;
+  color: #ffffff;
+  border-color: #000000;
 }
 
-/* Moon Animation */
-.theme-toggle:hover .moon-icon {
-  animation: rotate-moon 1.5s linear infinite;
-}
-
-@keyframes rotate-moon {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
-/* Bulb Glow Animation */
-.theme-toggle .bulb-icon {
-  filter: drop-shadow(0 0 5px var(--toggle-glow-light));
-}
-
-.layout.dark .theme-toggle .bulb-icon {
-  filter: drop-shadow(0 0 10px var(--toggle-glow-dark));
-}
-
-.theme-toggle:hover .bulb-icon {
-  animation: pulse-bulb 1.5s infinite;
-}
-
-@keyframes pulse-bulb {
-  0% {
-    filter: drop-shadow(0 0 5px var(--toggle-glow-light));
-  }
-  50% {
-    filter: drop-shadow(0 0 15px var(--toggle-glow-light));
-  }
-  100% {
-    filter: drop-shadow(0 0 5px var(--toggle-glow-light));
-  }
+/* Dark mode styling for the auth button */
+.layout[data-theme="dark"] .auth-button {
+  background-color: #ffffff;
+  color: #000000;
+  border-color: #ffffff;
 }

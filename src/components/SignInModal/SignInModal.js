@@ -12,12 +12,14 @@ function SignInModal({ isOpen, onClose, onSignIn }) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
+          onClick={onClose}
         >
           <motion.div
             className="modal-content"
             initial={{ y: -50, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: -50, opacity: 0 }}
+            onClick={(e) => e.stopPropagation()}
           >
             <h2>Unlock Full Capacity</h2>
             <p>Please sign in to save and access your notes and checklists across all your devices.</p>
