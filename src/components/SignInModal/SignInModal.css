@@ -1,0 +1,74 @@
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: var(--item-bg);
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  max-width: 400px;
+  width: 90%;
+  text-align: center;
+  color: var(--text-color);
+}
+
+.modal-content h2 {
+  margin-top: 0;
+  font-size: 1.5rem;
+}
+
+.modal-content p {
+  margin: 1rem 0 1.5rem;
+  line-height: 1.6;
+}
+
+.modal-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.modal-signin-btn,
+.modal-close-btn {
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.modal-signin-btn {
+  background-color: #4285f4;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+
+.modal-signin-btn:hover {
+  background-color: #357ae8;
+  transform: translateY(-2px);
+}
+
+.modal-close-btn {
+  background: transparent;
+  color: var(--text-color);
+}
+
+.modal-close-btn:hover {
+  background: rgba(128, 128, 128, 0.1);
+}
