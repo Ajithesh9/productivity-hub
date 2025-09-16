@@ -45,19 +45,21 @@ function Navbar({ onWidthChange, user, openSignInModal }) {
           className={location.pathname === "/notes" ? "active" : ""}
           onClick={() => handleProtectedLinkClick("/notes")}
         >
-          <a>
+          {/* Changed <a> to <div> */}
+          <div className="navbar-item-container"> 
             <FileText className="icon" />
             <span className="text">Notes</span>
-          </a>
+          </div>
         </li>
         <li
           className={location.pathname === "/checklist" ? "active" : ""}
           onClick={() => handleProtectedLinkClick("/checklist")}
         >
-          <a>
+          {/* Changed <a> to <div> */}
+          <div className="navbar-item-container">
             <CheckSquare className="icon" />
             <span className="text">Checklist</span>
-          </a>
+          </div>
         </li>
         <li className="about">
           <Link to="/about">

@@ -3,12 +3,14 @@ import { Outlet } from "react-router-dom";
 import Navbar from "./Navbar/Navbar";
 import MusicPlayer from "./MusicPlayer/MusicPlayer";
 import ThemeToggle from "./ThemeToggle/ThemeToggle";
-import SignInModal from "./SignInModal/SignInModal"; // Import the modal
+import SignInModal from "./SignInModal/SignInModal";
 import { auth, googleProvider } from "../firebase";
-import { signInWithPopup, onAuthStateChanged, signOut, GoogleAuthProvider } from "firebase/auth";
+// The only change is removing 'GoogleAuthProvider' from this line
+import { signInWithPopup, onAuthStateChanged, signOut } from "firebase/auth"; 
 import { LogIn, LogOut } from "lucide-react";
 import "./Layout.css";
 
+// ... (the rest of the file remains exactly the same) ...
 function Layout() {
   const [theme, setTheme] = useState("light");
   const [navbarWidth, setNavbarWidth] = useState(60);

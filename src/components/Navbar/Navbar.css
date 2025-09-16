@@ -65,6 +65,21 @@
   background: rgba(0, 0, 0, 0.05);
 }
 
+.navbar-item-container {
+  display: flex;
+  align-items: center;
+  color: var(--text-color);
+  text-decoration: none;
+  font-family: "Poppins", sans-serif;
+  font-size: 17.5px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  padding: 15px 10px;
+  width: 100%;
+  box-sizing: border-box;
+  min-width: 60px;
+}
+
 .navbar li a {
   display: flex;
   align-items: center;
