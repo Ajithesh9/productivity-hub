@@ -1,88 +1,77 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useOutletContext } from "react-router-dom";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
-import { v4 as uuidv4 } from "uuid";
+import { db } from "../../firebase"; // Import Firestore
+import {
+  collection,
+  query,
+  onSnapshot,
+  addDoc,
+  deleteDoc,
+  doc,
+  updateDoc,
+  orderBy,
+} from "firebase/firestore";
 import "./Checklist.css";
-
-function useLocalStorage(key, initialValue) {
-  const [storedValue, setStoredValue] = useState(() => {
-    try {
-      const item = window.localStorage.getItem(key);
-      return item ? JSON.parse(item) : initialValue;
-    } catch (error) {
-      console.error(`Error reading localStorage key "${key}": `, error);
-      return initialValue;
-    }
-  });
-
-  React.useEffect(() => {
-    try {
-      window.localStorage.setItem(key, JSON.stringify(storedValue));
-    } catch (error) {
-      console.error(`Error setting localStorage key "${key}": `, error);
-    }
-  }, [key, storedValue]);
-
-  return [storedValue, setStoredValue];
-}
 
 function Checklist() {
   const { user, loading } = useOutletContext();
-  const [unfinishedTasks, setUnfinishedTasks] = useLocalStorage(
-    "checklist_unfinishedTasks",
-    []
-  );
-  const [finishedTasks, setFinishedTasks] = useLocalStorage(
-    "checklist_finishedTasks",
-    []
-  );
+  // State is now managed by Firestore
+  const [unfinishedTasks, setUnfinishedTasks] = useState([]);
+  const [finishedTasks, setFinishedTasks] = useState([]);
   const [input, setInput] = useState("");
 
-  const addTask = () => {
+  // Effect to fetch tasks from Firestore in real-time
+  useEffect(() => {
+    if (!user) {
+      setUnfinishedTasks([]);
+      setFinishedTasks([]);
+      return;
+    }
+
+    // Query for tasks, ordered by their creation time
+    const q = query(collection(db, "users", user.uid, "tasks"), orderBy("createdAt"));
+
+    // Real-time listener
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const tasks = snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
+      setUnfinishedTasks(tasks.filter(task => !task.isFinished));
+      setFinishedTasks(tasks.filter(task => task.isFinished));
+    });
+
+    return () => unsubscribe();
+  }, [user]);
+
+  const addTask = async () => {
     if (input.trim()) {
-      const newTask = { id: uuidv4(), text: input.slice(0, 80) };
-      setUnfinishedTasks((prev) => [...prev, newTask]);
+      await addDoc(collection(db, "users", user.uid, "tasks"), {
+        text: input.slice(0, 80),
+        isFinished: false,
+        createdAt: new Date(),
+      });
       setInput("");
     }
   };
 
-  const deleteTask = (id, isUnfinished) => {
-    if (isUnfinished) {
-      setUnfinishedTasks(unfinishedTasks.filter((t) => t.id !== id));
-    } else {
-      setFinishedTasks(finishedTasks.filter((t) => t.id !== id));
-    }
+  const deleteTask = async (id) => {
+    await deleteDoc(doc(db, "users", user.uid, "tasks", id));
   };
 
   const onDragEnd = useCallback(
-    (result) => {
-      const { source, destination } = result;
+    async (result) => {
+      const { source, destination, draggableId } = result;
       if (!destination) return;
-      if (source.droppableId === destination.droppableId && source.index === destination.index) return;
 
-      const startList = source.droppableId === "unfinished" ? [...unfinishedTasks] : [...finishedTasks];
-      const endList = destination.droppableId === "unfinished" ? [...unfinishedTasks] : [...finishedTasks];
-      const [movedTask] = startList.splice(source.index, 1);
-
-      if (source.droppableId === destination.droppableId) {
-        startList.splice(destination.index, 0, movedTask);
-        if (source.droppableId === "unfinished") {
-          setUnfinishedTasks(startList);
-        } else {
-          setFinishedTasks(startList);
-        }
-      } else {
-        endList.splice(destination.index, 0, movedTask);
-        if (source.droppableId === "unfinished") {
-          setUnfinishedTasks(startList);
-          setFinishedTasks(endList);
-        } else {
-          setFinishedTasks(startList);
-          setUnfinishedTasks(endList);
-        }
+      // If moving to the other column, update the task's status in Firestore
+      if (source.droppableId !== destination.droppableId) {
+        await updateDoc(doc(db, "users", user.uid, "tasks", draggableId), {
+          isFinished: destination.droppableId === 'finished'
+        });
       }
+      // Note: For simplicity, this example doesn't handle reordering within a list.
+      // That would require adding an 'order' field to the Firestore documents.
     },
-    [unfinishedTasks, finishedTasks, setUnfinishedTasks, setFinishedTasks]
+    [user]
   );
 
   if (loading) {
@@ -120,7 +109,7 @@ function Checklist() {
                             <li ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} className="task-item">
                               <span className="task-text">{task.text}</span>
                               <div className="task-actions">
-                                <button onClick={() => deleteTask(task.id, true)} className="btn delete-btn">Delete</button>
+                                <button onClick={() => deleteTask(task.id)} className="btn delete-btn">Delete</button>
                               </div>
                             </li>
                           )}
@@ -142,7 +131,7 @@ function Checklist() {
                             <li ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} className="task-item">
                               <span className="task-text completed">{task.text}</span>
                               <div className="task-actions">
-                                <button onClick={() => deleteTask(task.id, false)} className="btn delete-btn">Delete</button>
+                                <button onClick={() => deleteTask(task.id)} className="btn delete-btn">Delete</button>
                               </div>
                             </li>
                           )}

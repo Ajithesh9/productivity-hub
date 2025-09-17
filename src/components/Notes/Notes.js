@@ -1,54 +1,76 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useOutletContext } from "react-router-dom";
+import { db } from "../../firebase"; // Make sure this import is correct
+import {
+  collection,
+  query,
+  onSnapshot,
+  addDoc,
+  deleteDoc,
+  doc,
+  orderBy,
+} from "firebase/firestore";
 import "./Notes.css";
-
-function useLocalStorage(key, initialValue) {
-  const [storedValue, setStoredValue] = useState(() => {
-    try {
-      const item = window.localStorage.getItem(key);
-      return item ? JSON.parse(item) : initialValue;
-    } catch (error) {
-      console.error("Error reading localStorage key “" + key + "”: ", error);
-      return initialValue;
-    }
-  });
-
-  useEffect(() => {
-    try {
-      window.localStorage.setItem(key, JSON.stringify(storedValue));
-    } catch (error) {
-      console.error("Error setting localStorage key “" + key + "”: ", error);
-    }
-  }, [key, storedValue]);
-
-  return [storedValue, setStoredValue];
-}
 
 function Notes() {
   const { user, loading } = useOutletContext();
-  const [notes, setNotes] = useLocalStorage("notes", []);
-  const [activeNoteId, setActiveNoteId] = useLocalStorage("activeNoteId", null);
+  const [notes, setNotes] = useState([]);
+  const [activeNoteId, setActiveNoteId] = useState(null);
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [previewNote, setPreviewNote] = useState(null);
   const textareaRef = useRef(null);
 
-  const addNote = () => {
+  // This effect fetches notes from Firestore in real-time
+  useEffect(() => {
+    if (!user) {
+      setNotes([]); // Clear notes if user logs out
+      return;
+    }
+    // This query gets the notes for the currently logged-in user
+    const q = query(
+      collection(db, "users", user.uid, "notes"),
+      orderBy("createdAt", "desc")
+    );
+
+    // The onSnapshot listener provides real-time updates
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      const notesData = [];
+      querySnapshot.forEach((doc) => {
+        notesData.push({ ...doc.data(), id: doc.id });
+      });
+      setNotes(notesData);
+    });
+
+    // Cleanup the listener when the component is unmounted
+    return () => unsubscribe();
+  }, [user]); // This effect re-runs only when the user logs in or out
+
+  const addNote = async () => {
+    if (!user) {
+      console.error("User is not logged in. Cannot add note.");
+      return;
+    }
     if (!title.trim() || !content.trim()) {
       alert("Title and content cannot be empty.");
       return;
     }
-    const newNote = { id: Date.now().toString(), title, content };
-    const updatedNotes = [...notes, newNote];
-    setNotes(updatedNotes);
-    setActiveNoteId(newNote.id);
-    setTitle("");
-    setContent("");
+    try {
+      await addDoc(collection(db, "users", user.uid, "notes"), {
+        title: title,
+        content: content,
+        createdAt: new Date(),
+      });
+      setTitle("");
+      setContent("");
+    } catch (e) {
+      console.error("Error adding document: ", e);
+      alert("Failed to add note. Check the console for more details.");
+    }
   };
 
-  const deleteNote = (id) => {
-    const updatedNotes = notes.filter((note) => note.id !== id);
-    setNotes(updatedNotes);
+  const deleteNote = async (id) => {
+    await deleteDoc(doc(db, "users", user.uid, "notes", id));
     if (activeNoteId === id) setActiveNoteId(null);
   };
 
@@ -67,20 +89,9 @@ function Notes() {
 
   const handleContentChange = (e) => {
     setContent(e.target.value);
-    if (textareaRef.current) {
-      textareaRef.current.style.height = "auto";
-      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
-    }
   };
-
-  const handleNotePreview = (note) => {
-    setPreviewNote(note);
-  };
-
-  const closePreview = () => {
-    setPreviewNote(null);
-  };
-
+  const handleNotePreview = (note) => setPreviewNote(note);
+  const closePreview = () => setPreviewNote(null);
   const activeNote = notes.find((note) => note.id === activeNoteId);
 
   useEffect(() => {
@@ -123,7 +134,9 @@ function Notes() {
             {notes.map((note) => (
               <div
                 key={note.id}
-                className={`note-item ${activeNoteId === note.id ? "active" : ""}`}
+                className={`note-item ${
+                  activeNoteId === note.id ? "active" : ""
+                }`}
                 onClick={() => setActiveNoteId(note.id)}
               >
                 <span className="note-title">{note.title || "Untitled"}</span>
@@ -163,14 +176,17 @@ function Notes() {
                 </button>
               </div>
               <div className="active-content">
-                {activeNote.content.substring(0, 10)}
+                {activeNote.content.substring(0, 100)}...
               </div>
             </div>
           )}
           {previewNote && (
             <>
               <div className="preview-overlay" onClick={closePreview} />
-              <div className="preview-window" onClick={(e) => e.stopPropagation()}>
+              <div
+                className="preview-window"
+                onClick={(e) => e.stopPropagation()}
+              >
                 <button className="close" onClick={closePreview}>
                   ×
                 </button>
@@ -183,7 +199,9 @@ function Notes() {
       ) : (
         <div className="feature-locked">
           <h2>Sign in to access your Notes</h2>
-          <p>Please sign in to create, save, and view your notes across devices.</p>
+          <p>
+            Please sign in to create, save, and view your notes across devices.
+          </p>
         </div>
       )}
     </div>
